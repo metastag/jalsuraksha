@@ -1,0 +1,14 @@
+{
+  "name": "g315-water-portal-capstone",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Community Water Contamination Reporting and Risk-Mapping Portal (Group G315 - Milestone 2)",
+  "scripts": {
+    "seed": "npm --prefix backend run seed",
+    "test": "npm --prefix backend run test",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix backend run start",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev"
+  }
+}

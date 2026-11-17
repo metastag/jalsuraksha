@@ -1,0 +1,5 @@
+2026/11/17-14:30:16.560 1784 Creating DB C:\Users\MetaStag\Projects\capstone\docs\edge_temp_profile\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/11/17-14:30:16.610 1784 Reusing MANIFEST C:\Users\MetaStag\Projects\capstone\docs\edge_temp_profile\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/11/17-14:30:16.955 6d0 Level-0 table #5: started
+2026/11/17-14:30:16.962 6d0 Level-0 table #5: 683273 bytes OK
+2026/11/17-14:30:16.966 6d0 Delete type=0 #3

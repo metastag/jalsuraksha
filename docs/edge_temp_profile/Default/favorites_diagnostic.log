@@ -1,0 +1,17 @@
+2026-11-17 09:00:13.136: [INFO] CurrentProfilePath: C:\Users\MetaStag\Projects\capstone\docs\edge_temp_profile\Default
+2026-11-17 09:00:13.136: [INFO] Profiles total count: 1
+2026-11-17 09:00:13.136: [INFO] Profile: name=Profile 1 path=C:\Users\MetaStag\Projects\capstone\docs\edge_temp_profile\Default lastActive=2026-11-17T09:00:13.121Z
+2026-11-17 09:00:13.136: [INFO] LastUsedProfileDir: C:\Users\MetaStag\Projects\capstone\docs\edge_temp_profile\Default
+2026-11-17 09:00:13.136: [INFO] MostRecentlyActiveProfile: name=Profile 1 path=C:\Users\MetaStag\Projects\capstone\docs\edge_temp_profile\Default lastActive=2026-11-17T09:00:13.121Z
+2026-11-17 09:00:13.136: [INFO] OnDoneLoading sync enabled: 0
+2026-11-17 09:00:13.136: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-11-17 09:00:13.136: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-11-17 09:00:13.136: [INFO] BookmarksSnapshot Startup total=3 bar=3 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-11-17 09:00:13.139: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-11-17 09:00:13.347: [INFO] VisibilityChanged: 0
+2026-11-17 09:00:15.381: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 0
+2026-11-17 09:00:15.384: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-17 09:00:15.387: [INFO] Primary account changed.
+2026-11-17 09:00:15.387: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-11-17 09:00:15.399: [INFO] RecordSyncInitDuration has_sync_been_enabled: 0 state: 3
+2026-11-17 09:00:22.064: [INFO] Sync initialization duration: 6570ms
