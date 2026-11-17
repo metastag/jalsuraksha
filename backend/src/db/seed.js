@@ -458,8 +458,32 @@ async function seedDatabase() {
   );
 }
 
+async function initAndSeedIfEmpty() {
+  console.log('[DB] Checking PostgreSQL schema and initial dataset...');
+  try {
+    await db.ensureDatabaseExists();
+  } catch (err) {
+    // Database may already exist inside Docker container (created via POSTGRES_DB)
+  }
+
+  const schemaSql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+  await db.query(schemaSql);
+
+  const countRes = await db.query('SELECT COUNT(*)::int AS cnt FROM water_sources');
+  const existingCount = countRes.rows[0]?.cnt || 0;
+  if (existingCount > 0) {
+    console.log(`[DB] Database already initialized with ${existingCount} water sources. Preserving existing data.`);
+    return;
+  }
+
+  console.log('[DB] Empty database detected — running initial Greater Noida seed...');
+  await seedDatabase();
+}
+
 if (require.main === module) {
-  seedDatabase()
+  const onlyIfEmpty = process.argv.includes('--if-empty');
+  const runner = onlyIfEmpty ? initAndSeedIfEmpty : seedDatabase;
+  runner()
     .then(() => {
       console.log('[Seed] Database initialization complete.');
       process.exit(0);
@@ -470,4 +494,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { seedDatabase };
+module.exports = { seedDatabase, initAndSeedIfEmpty };

@@ -84,6 +84,7 @@ export default function ReportModal({
   useEffect(() => {
     if (!isOpen) return;
     setError('');
+    setPhotoFile(null);
     const urlModal = new URLSearchParams(window.location.search).get('modal');
     if (urlModal === 'report_tester' || user?.role === 'tester' || user?.role === 'authority') {
       setReportType('test_reading');
@@ -155,6 +156,10 @@ export default function ReportModal({
     setError('');
 
     try {
+      if (!photoFile) {
+        throw new Error('Please upload an image of the water source or test reading before submitting.');
+      }
+
       const formData = new FormData();
       if (sourceMode === 'existing') {
         formData.append('source_id', selectedSourceId);
@@ -603,13 +608,21 @@ export default function ReportModal({
               />
             </div>
             <div className="space-y-2">
-              <label className="block font-bold text-slate-700">Attach Field Test / Water Photo (FR3)</label>
+              <label className="block font-bold text-slate-700">
+                Attach Field Test / Water Photo (FR3) <span className="text-red-600">* Required</span>
+              </label>
               <input
                 type="file"
+                required
                 accept="image/*"
                 onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
-                className="w-full text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-slate-100 file:text-slate-700 file:font-semibold hover:file:bg-slate-200"
+                className="w-full text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-sky-50 file:text-sky-700 file:font-semibold hover:file:bg-sky-100 border border-slate-300 rounded-lg p-1"
               />
+              {!photoFile && (
+                <p className="text-[11px] text-amber-700 font-medium">
+                  * Photo evidence is mandatory to submit a report.
+                </p>
+              )}
               {!user && (
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <input

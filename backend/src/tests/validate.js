@@ -142,6 +142,7 @@ async function runValidationSuite() {
         severity: 'severe',
       },
       visual_issues: ['sewage_smell'],
+      photo_url: '/uploads/sample-evidence.jpg',
       notes: 'Cluster of acute diarrhea and fever near Pari Chowk transit camp tank.',
     });
     record(

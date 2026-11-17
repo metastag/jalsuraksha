@@ -5,41 +5,42 @@
 
 ---
 
-## 1. Overview
+## Option A: Run with Docker Compose (Recommended — Zero Local Setup)
 
-**JalSuraksha** is a full-stack geospatial web portal that bridges the information gap between citizens/community water testers and local Public Health Engineering Department (PHED) water authorities. It enables ground-level reporting of contaminated handpumps, open wells, and community tanks, computes a composite **BIS IS 10500:2012** risk score (0–100) and confidence level, renders a live color-coded contamination risk map on **OpenFreeMap** vector tiles via **MapLibre GL JS**, and automatically dispatches alerts to PHED officers.
+Requires only **Docker Desktop** (no local Node.js or PostgreSQL installation needed).
+
+```bash
+# 1. Build and start the PostgreSQL 18 container + Full-Stack App container
+docker compose up --build
+```
+
+Then open **http://localhost:5000** in your browser.
+
+- On first startup, the app automatically creates the PostgreSQL schema and seeds the 12 Greater Noida water sources, BIS IS 10500 reports, and PHED alerts.
+- Subsequent restarts (`docker compose up`) preserve any new reports and uploaded images in Docker volumes (`postgres_data` and `uploads_data`).
+- To completely reset the database back to initial seed data:
+  ```bash
+  docker compose down -v
+  docker compose up --build
+  ```
 
 ---
 
-## 2. Quick Start (Local PostgreSQL 18)
+## Option B: Run Locally Without Docker (Local Node.js + Local PostgreSQL 18)
 
-### Prerequisites
-- **Node.js** (v18+ / v24)
-- **PostgreSQL 18** running locally on `127.0.0.1:5432` (configured in `backend/.env`)
-
-### Commands
-
-```powershell
-# 1. Initialize & seed the local PostgreSQL 18 database (water_portal_db)
-npm run seed
-
-# 2. Run the automated BIS IS 10500 & API validation suite (8 test cases)
-npm test
-
-# 3. Build frontend & start the unified full-stack server on http://127.0.0.1:5000
-npm run build
-npm start
-```
-
-Or run the frontend Vite dev server (`http://localhost:5173`) and backend Express API (`http://localhost:5000`) separately:
-```powershell
-npm run dev:backend
-npm run dev:frontend
-```
+1. Copy `backend/.env.example` to `backend/.env` and set your local PostgreSQL credentials.
+2. Run:
+   ```powershell
+   npm --prefix backend install
+   npm --prefix frontend install
+   npm run build
+   npm start
+   ```
+3. Open **http://localhost:5000** (or run `npm run dev:backend` and `npm run dev:frontend` for hot-reload on **http://localhost:5173**).
 
 ---
 
-## 3. Pre-Seeded Demo Accounts (`password123` or 1-Click Role Switcher in Navbar)
+## Pre-Seeded Demo Accounts (`password123` or 1-Click Role Switcher in Top Navbar)
 
 | Role | Name | Email | Password |
 | :--- | :--- | :--- | :--- |

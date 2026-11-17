@@ -9,9 +9,11 @@ const authRoutes = require('./routes/auth.routes');
 const sourcesRoutes = require('./routes/sources.routes');
 const reportsRoutes = require('./routes/reports.routes');
 const authorityRoutes = require('./routes/authority.routes');
+const { initAndSeedIfEmpty } = require('./db/seed');
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000', 10);
+const HOST = process.env.HOST || '0.0.0.0';
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -49,9 +51,16 @@ app.get('*', (req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, '127.0.0.1', () => {
-    console.log(`[JalSuraksha API] Server running on http://127.0.0.1:${PORT}`);
-  });
+  initAndSeedIfEmpty()
+    .then(() => {
+      app.listen(PORT, HOST, () => {
+        console.log(`[JalSuraksha API] Server running on http://localhost:${PORT}`);
+      });
+    })
+    .catch((err) => {
+      console.error('[JalSuraksha API] Failed to initialize database:', err);
+      process.exit(1);
+    });
 }
 
 module.exports = app;

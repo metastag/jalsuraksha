@@ -140,6 +140,12 @@ router.post('/', optionalAuth, upload.single('photo'), async (req, res) => {
     const effectiveName = req.user ? req.user.name : (reporter_name || 'Anonymous Citizen');
     const photoUrl = req.file ? `/uploads/${req.file.filename}` : (req.body.photo_url || null);
 
+    if (!photoUrl) {
+      return res.status(400).json({
+        error: 'An image upload is required to submit a water contamination report.',
+      });
+    }
+
     // 2. Evaluate single report risk against BIS IS 10500 & symptom rules
     const singleEval = evaluateSingleReport({
       report_type: report_type || 'visual_complaint',

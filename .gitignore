@@ -1,3 +1,8 @@
-backend/node_modules
-frontend/node_modules
+node_modules/
+**/node_modules/
+frontend/dist/
 backend/.env
+backend/uploads/*
+!backend/uploads/.gitkeep
+docs/edge_temp_profile/
+.DS_Store

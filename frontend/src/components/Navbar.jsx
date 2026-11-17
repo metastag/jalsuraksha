@@ -20,14 +20,21 @@ export default function Navbar({
   return (
     <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
       <div className="max-w-[1600px] mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
-        {/* Brand Identity */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-inner">
+        {/* Brand Identity (Click to return to Live Risk Map) */}
+        <button
+          type="button"
+          onClick={() => setActiveTab('map')}
+          title="Go to Live Risk Map"
+          className="flex items-center gap-3 text-left cursor-pointer group focus:outline-none"
+        >
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
             <Droplets className="w-6 h-6 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-lg tracking-tight text-white">JalSuraksha</span>
+              <span className="font-bold text-lg tracking-tight text-white group-hover:text-sky-300 transition-colors">
+                JalSuraksha
+              </span>
               <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">
                 Group G315 • SDG 6 & 3
               </span>
@@ -36,7 +43,7 @@ export default function Navbar({
               Community Water Contamination Reporting & Live Risk-Mapping Portal (Greater Noida / GB Nagar)
             </p>
           </div>
-        </div>
+        </button>
 
         {/* Navigation Links */}
         <nav className="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-xl border border-slate-700/70">
