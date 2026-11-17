@@ -10,6 +10,7 @@ import {
   MailCheck,
   MapPin,
   RefreshCw,
+  Search,
 } from 'lucide-react';
 import { apiFetch } from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -26,6 +27,8 @@ export default function AuthorityDashboard({
   const initialSubTab = new URLSearchParams(window.location.search).get('subtab') || 'alerts';
   const [subTab, setSubTab] = useState(initialSubTab); // 'alerts' | 'sources' | 'reports'
   const [statusFilter, setStatusFilter] = useState('all');
+  const [reportSearch, setReportSearch] = useState('');
+  const [reportStatusFilter, setReportStatusFilter] = useState('all');
   const [remarkInputs, setRemarkInputs] = useState({});
   const [actionMessage, setActionMessage] = useState('');
 
@@ -97,6 +100,31 @@ export default function AuthorityDashboard({
   const filteredSources = sources.filter(
     (s) => statusFilter === 'all' || s.status === statusFilter
   );
+
+  const filteredReports = reports.filter((r) => {
+    const matchesStatus =
+      reportStatusFilter === 'all' || r.verification_status === reportStatusFilter;
+    if (!matchesStatus) return false;
+
+    const q = reportSearch.trim().toLowerCase();
+    if (!q) return true;
+
+    const searchableText = [
+      `#${r.id}`,
+      r.source_code,
+      r.source_name,
+      r.locality,
+      r.reporter_name,
+      r.report_type,
+      r.notes,
+      r.verification_status,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    return searchableText.includes(q);
+  });
 
   return (
     <div className="max-w-[1500px] mx-auto p-5 space-y-6">
@@ -395,79 +423,121 @@ export default function AuthorityDashboard({
         </div>
       )}
 
-      {/* Tab 3: Citizen & Tester Report Verification Queue */}
+      {/* Tab 3: Citizen & Tester Report Verification & Moderation Queue */}
       {subTab === 'reports' && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[11px]">
-                <th className="p-3.5">Report & Source</th>
-                <th className="p-3.5">Reporter & Type</th>
-                <th className="p-3.5">Findings / Notes</th>
-                <th className="p-3.5">Impact Score</th>
-                <th className="p-3.5">Verification Status</th>
-                <th className="p-3.5">Moderate / Verify</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {reports.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50/80">
-                  <td className="p-3.5">
-                    <div className="font-mono text-[10px] font-bold text-slate-500">
-                      Report #{r.id} • {r.source_code}
-                    </div>
-                    <div className="font-bold text-slate-900">{r.source_name}</div>
-                    <div className="text-slate-500">{r.locality}</div>
-                  </td>
-                  <td className="p-3.5">
-                    <div className="font-semibold text-slate-800">{r.reporter_name}</div>
-                    <span className="inline-block mt-0.5 text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
-                      {r.report_type.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="p-3.5 max-w-md">
-                    <p className="text-slate-700">{r.notes}</p>
-                  </td>
-                  <td className="p-3.5 font-extrabold text-slate-900">
-                    {r.calculated_report_risk}/100
-                  </td>
-                  <td className="p-3.5">
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase ${
-                        r.verification_status === 'verified'
-                          ? 'bg-blue-100 text-blue-800'
-                          : r.verification_status === 'resolved'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : r.verification_status === 'rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {r.verification_status}
-                    </span>
-                  </td>
-                  <td className="p-3.5">
-                    <div className="flex gap-1.5">
-                      <button
-                        disabled={!canAct}
-                        onClick={() => handleVerifyReport(r.id, 'verified')}
-                        className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold disabled:opacity-40"
-                      >
-                        Verify
-                      </button>
-                      <button
-                        disabled={!canAct}
-                        onClick={() => handleVerifyReport(r.id, 'rejected')}
-                        className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold disabled:opacity-40"
-                      >
-                        Reject Spam
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+        <div className="space-y-4">
+          {/* Search Bar & Status Filter Controls */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+            <div className="relative flex-1 min-w-[260px]">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search reports by ID (#1), source code (GN-WS-101), locality, reporter name, or findings..."
+                value={reportSearch}
+                onChange={(e) => setReportSearch(e.target.value)}
+                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:border-sky-500"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              <span className="font-bold text-slate-600 mr-1">Verification Status:</span>
+              {['all', 'pending', 'verified', 'resolved', 'rejected'].map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => setReportStatusFilter(st)}
+                  className={`px-3 py-1.5 rounded-lg font-semibold capitalize transition ${
+                    reportStatusFilter === st
+                      ? 'bg-sky-600 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {st}
+                </button>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[11px]">
+                  <th className="p-3.5">Report & Source</th>
+                  <th className="p-3.5">Reporter & Type</th>
+                  <th className="p-3.5">Findings / Notes</th>
+                  <th className="p-3.5">Impact Score</th>
+                  <th className="p-3.5">Verification Status</th>
+                  <th className="p-3.5">Moderate / Verify</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredReports.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-slate-500 font-medium">
+                      No reports match your search query "{reportSearch}".
+                    </td>
+                  </tr>
+                ) : (
+                  filteredReports.map((r) => (
+                    <tr key={r.id} className="hover:bg-slate-50/80">
+                      <td className="p-3.5">
+                        <div className="font-mono text-[10px] font-bold text-slate-500">
+                          Report #{r.id} • {r.source_code}
+                        </div>
+                        <div className="font-bold text-slate-900">{r.source_name}</div>
+                        <div className="text-slate-500">{r.locality}</div>
+                      </td>
+                      <td className="p-3.5">
+                        <div className="font-semibold text-slate-800">{r.reporter_name}</div>
+                        <span className="inline-block mt-0.5 text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                          {r.report_type.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="p-3.5 max-w-md">
+                        <p className="text-slate-700">{r.notes}</p>
+                      </td>
+                      <td className="p-3.5 font-extrabold text-slate-900">
+                        {r.calculated_report_risk}/100
+                      </td>
+                      <td className="p-3.5">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase ${
+                            r.verification_status === 'verified'
+                              ? 'bg-blue-100 text-blue-800'
+                              : r.verification_status === 'resolved'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : r.verification_status === 'rejected'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-amber-100 text-amber-800'
+                          }`}
+                        >
+                          {r.verification_status}
+                        </span>
+                      </td>
+                      <td className="p-3.5">
+                        <div className="flex gap-1.5">
+                          <button
+                            disabled={!canAct}
+                            onClick={() => handleVerifyReport(r.id, 'verified')}
+                            className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold disabled:opacity-40"
+                          >
+                            Verify
+                          </button>
+                          <button
+                            disabled={!canAct}
+                            onClick={() => handleVerifyReport(r.id, 'rejected')}
+                            className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold disabled:opacity-40"
+                          >
+                            Reject Spam
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

@@ -9,21 +9,35 @@
   }
 }
 
-@keyframes pulse-ring {
+/* Note: Apply animations to the inner marker child so MapLibre's outer translate3d() is never overwritten */
+@keyframes pulse-ring-high {
   0% {
-    transform: scale(0.9);
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.85);
   }
   70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 12px rgba(220, 38, 38, 0);
+    box-shadow: 0 0 0 14px rgba(220, 38, 38, 0);
   }
   100% {
-    transform: scale(0.9);
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
   }
 }
 
+@keyframes pulse-ring-user {
+  0% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.85);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(14, 165, 233, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+  }
+}
+
 .marker-high-pulse {
-  animation: pulse-ring 2s infinite;
+  animation: pulse-ring-high 1.8s infinite;
+}
+
+.marker-user-pulse {
+  animation: pulse-ring-user 2s infinite;
 }
